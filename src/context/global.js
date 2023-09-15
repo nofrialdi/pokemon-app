@@ -1,48 +1,44 @@
 import { debounce } from "lodash";
-import React, { createContext, useEffect, useReducer, useState } from "react";
+import React, { createContext, useContext, useEffect, useReducer, useState } from "react";
 
-const GlobalContext = createContext({});
+const GlobalContext = createContext();
 
 //actions
 const LOADING = "LOADING";
 const GET_POKEMON = "GET_POKEMON";
-const GET_ALL_POKEMON = "GET_ALL_POKEMON_DATA";
-const GET_ALL_POKEMON_DATA = "GET_ALL_POKEMON_DATA";
+const GET_ALL_POKEMON = "GET_ALL_POKEMON";
 const GET_SEARCH = "GET_SEARCH";
-const SEARCH_POKEMON = "SEARCH_POKEMON";
 const GET_POKEMON_DATABASE = "GET_POKEMON_DATABASE";
 const NEXT = "NEXT";
 
-//reducers
+//reducer
 const reducer = (state, action) => {
 	switch (action.type) {
 		case LOADING:
-			return {
-				...state,
-				loading: true,
-			};
+			return { ...state, loading: true };
+
 		case GET_ALL_POKEMON:
 			return {
 				...state,
-				allPokemon: action.payload,
+				allPokemon: action.payload.results,
+				next: action.payload.next,
 				loading: false,
 			};
+
 		case GET_POKEMON:
-			return {
-				...state,
-				pokemon: action.payload,
-				loading: false,
-			};
+			return { ...state, pokemon: action.payload, loading: false };
+
 		case GET_POKEMON_DATABASE:
-			return {
-				...state,
-				pokemonDataBase: action.payload,
-				loading: false,
-			};
+			return { ...state, pokemonDataBase: action.payload, loading: false };
+
 		case GET_SEARCH:
+			return { ...state, searchResults: action.payload, loading: false };
+
+		case NEXT:
 			return {
 				...state,
-				searchResults: action.payload,
+				allPokemon: [...state.allPokemon, ...action.payload.results],
+				next: action.payload.next,
 				loading: false,
 			};
 	}
@@ -51,9 +47,11 @@ const reducer = (state, action) => {
 };
 
 export const GlobalProvider = ({ children }) => {
-	//base Url
+	//base url
 	const baseUrl = "https://pokeapi.co/api/v2/";
-	const initialState = {
+
+	//initial state
+	const intitialState = {
 		allPokemon: [],
 		pokemon: {},
 		pokemonDataBase: [],
@@ -62,43 +60,42 @@ export const GlobalProvider = ({ children }) => {
 		loading: false,
 	};
 
-	const [state, dispatch] = useReducer(reducer, initialState);
-	const [allPokemonData, setAllpokemonData] = useState([]);
+	const [state, dispatch] = useReducer(reducer, intitialState);
+	const [allPokemonData, setAllPokemonData] = useState([]);
 
 	const allPokemon = async () => {
 		dispatch({ type: "LOADING" });
 
 		const res = await fetch(`${baseUrl}pokemon?limit=20`);
 		const data = await res.json();
-		// console.log(data);
-		dispatch({ type: GET_ALL_POKEMON, payload: data.results });
+		console.log(data);
+		dispatch({ type: "GET_ALL_POKEMON", payload: data });
 
-		//fetch caracters data
+		//fetch character data
 		const allPokemonData = [];
 
 		for (const pokemon of data.results) {
-			// console.log(pokemon);
 			const pokemonRes = await fetch(pokemon.url);
-			// console.log(pokemonRes);
 			const pokemonData = await pokemonRes.json();
-			// console.log(pokemonData);
 			allPokemonData.push(pokemonData);
 		}
-		setAllpokemonData(allPokemonData);
+
+		setAllPokemonData(allPokemonData);
 	};
 
 	//get pokemon
 	const getPokemon = async (name) => {
-		dispatch({ type: LOADING });
+		dispatch({ type: "LOADING" });
 
 		const res = await fetch(`${baseUrl}pokemon/${name}`);
 		const data = await res.json();
-		dispatch({ type: GET_POKEMON, payload: data });
+
+		dispatch({ type: "GET_POKEMON", payload: data });
 	};
 
 	//get all pokemon data
 	const getPokemonDatabase = async () => {
-		dispatch({ type: LOADING });
+		dispatch({ type: "LOADING" });
 
 		const res = await fetch(`${baseUrl}pokemon?limit=100000&offset=0`);
 		const data = await res.json();
@@ -106,31 +103,57 @@ export const GlobalProvider = ({ children }) => {
 		dispatch({ type: "GET_POKEMON_DATABASE", payload: data.results });
 	};
 
-	//realtime search
+	//next page
+	const next = async () => {
+		dispatch({ type: "LOADING" });
+		const res = await fetch(state.next);
+		const data = await res.json();
+		dispatch({ type: "NEXT", payload: data });
+
+		//fetch the new pokemon data
+		const newPokemonData = [];
+		for (const pokemon of data.results) {
+			const pokemonRes = await fetch(pokemon.url);
+			const pokemonData = await pokemonRes.json();
+			newPokemonData.push(pokemonData);
+		}
+
+		//add new pokemon data to the old pokemon data
+		setAllPokemonData([...allPokemonData, ...newPokemonData]);
+	};
+
+	//real time search
 	const realTimeSearch = debounce(async (search) => {
-		dispatch({ type: LOADING });
+		dispatch({ type: "LOADING" });
 		//search pokemon database
 		const res = state.pokemonDataBase.filter((pokemon) => {
-			return pokemon.name.includes(search);
+			return pokemon.name.includes(search.toLowerCase());
 		});
 
-		// console.log(search);
 		dispatch({ type: "GET_SEARCH", payload: res });
-		// console.log(res);
 	}, 500);
 
+	//initial fetch
 	useEffect(() => {
 		getPokemonDatabase();
 		allPokemon();
 	}, []);
 
 	return (
-		<GlobalContext.Provider value={{ ...state, allPokemonData, getPokemon, realTimeSearch }}>
+		<GlobalContext.Provider
+			value={{
+				...state,
+				allPokemonData,
+				getPokemon,
+				realTimeSearch,
+				next,
+			}}
+		>
 			{children}
 		</GlobalContext.Provider>
 	);
 };
 
 export const useGlobalContext = () => {
-	return React.useContext(GlobalContext);
+	return useContext(GlobalContext);
 };
