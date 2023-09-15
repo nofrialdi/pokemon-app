@@ -107,6 +107,12 @@ function Pokemon() {
 										return <p key={move.move.name}>{move.move.name},</p>;
 									})}
 								</div>
+
+								<div>
+									<button className={styles.Back} type="button" onClick={() => router.push("/")}>
+										Back
+									</button>
+								</div>
 							</div>
 						</div>
 					</>
