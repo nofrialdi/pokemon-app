@@ -1,3 +1,4 @@
+import { debounce } from "lodash";
 import React, { createContext, useEffect, useReducer, useState } from "react";
 
 const GlobalContext = createContext({});
@@ -7,6 +8,7 @@ const LOADING = "LOADING";
 const GET_POKEMON = "GET_POKEMON";
 const GET_ALL_POKEMON = "GET_ALL_POKEMON_DATA";
 const GET_ALL_POKEMON_DATA = "GET_ALL_POKEMON_DATA";
+const GET_SEARCH = "GET_SEARCH";
 const SEARCH_POKEMON = "SEARCH_POKEMON";
 const GET_POKEMON_DATABASE = "GET_POKEMON_DATABASE";
 const NEXT = "NEXT";
@@ -31,6 +33,18 @@ const reducer = (state, action) => {
 				pokemon: action.payload,
 				loading: false,
 			};
+		case GET_POKEMON_DATABASE:
+			return {
+				...state,
+				pokemonDataBase: action.payload,
+				loading: false,
+			};
+		case GET_SEARCH:
+			return {
+				...state,
+				searchResults: action.payload,
+				loading: false,
+			};
 	}
 
 	return state;
@@ -43,7 +57,7 @@ export const GlobalProvider = ({ children }) => {
 		allPokemon: [],
 		pokemon: {},
 		pokemonDataBase: [],
-		searchResult: [],
+		searchResults: [],
 		next: "",
 		loading: false,
 	};
@@ -82,12 +96,36 @@ export const GlobalProvider = ({ children }) => {
 		dispatch({ type: GET_POKEMON, payload: data });
 	};
 
+	//get all pokemon data
+	const getPokemonDatabase = async () => {
+		dispatch({ type: LOADING });
+
+		const res = await fetch(`${baseUrl}pokemon?limit=100000&offset=0`);
+		const data = await res.json();
+
+		dispatch({ type: "GET_POKEMON_DATABASE", payload: data.results });
+	};
+
+	//realtime search
+	const realTimeSearch = debounce(async (search) => {
+		dispatch({ type: LOADING });
+		//search pokemon database
+		const res = state.pokemonDataBase.filter((pokemon) => {
+			return pokemon.name.includes(search);
+		});
+
+		// console.log(search);
+		dispatch({ type: "GET_SEARCH", payload: res });
+		// console.log(res);
+	}, 500);
+
 	useEffect(() => {
+		getPokemonDatabase();
 		allPokemon();
 	}, []);
 
 	return (
-		<GlobalContext.Provider value={{ ...state, allPokemonData, getPokemon }}>
+		<GlobalContext.Provider value={{ ...state, allPokemonData, getPokemon, realTimeSearch }}>
 			{children}
 		</GlobalContext.Provider>
 	);

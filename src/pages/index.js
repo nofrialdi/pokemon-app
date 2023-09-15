@@ -1,11 +1,32 @@
+import { useState } from "react";
 import { useGlobalContext } from "@/context/global";
 import Router from "next/router";
 
 export default function Home() {
 	const { allPokemonData } = useGlobalContext();
 	// console.log(allPokemonData);
+
+	const [search, setSearch] = useState("");
+
+	const handleSearch = (e) => {
+		setSearch(e.target.value);
+	};
 	return (
 		<main>
+			<form action="" className="search-form">
+				<div className="input-control">
+					<input
+						type="text"
+						value={search}
+						onChange={handleSearch}
+						placeholder="Search for a Pokemon..."
+					/>
+					<button className="submit-btn" type="submit">
+						Search
+					</button>
+				</div>
+			</form>
+			{search && <div className="search-results"></div>}
 			<div className="all-pokemon">
 				{allPokemonData ? (
 					allPokemonData.map((pokemon) => {
