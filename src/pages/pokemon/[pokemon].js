@@ -49,9 +49,9 @@ function Pokemon() {
 
 	return (
 		<div
-			className={styles.PokemonBg}
 			style={{
 				background: !loading && randomColor,
+				margin: "50px",
 			}}
 		>
 			{!loading ? (
