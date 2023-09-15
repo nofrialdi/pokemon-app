@@ -8,7 +8,9 @@
 </div>
 
 <br>
-
+<div align="center">
+<img width="80%" alt="App screenshot" src="/public/mockup.png">
+</div>
 <br>
 <br>
 
