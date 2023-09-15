@@ -56,9 +56,14 @@ export default function Home() {
 							<button className="submit-btn" type="submit">
 								Search
 							</button>
-							{search && searchResults.length > 0 && (
-								<div className="search-results">{displaySearchResults()}</div>
-							)}
+
+							{search ? (
+								searchResults.length > 0 ? (
+									<div className="search-results">{displaySearchResults()}</div>
+								) : (
+									<div className="search-results">Pokemon not found</div>
+								)
+							) : null}
 						</div>
 					</form>
 				</div>
