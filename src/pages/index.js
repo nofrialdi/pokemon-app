@@ -44,24 +44,25 @@ export default function Home() {
 				<div className="title">
 					<Image src="/logo_Pokemon.png" layout="fixed" width={250} height={100} />
 				</div>
-				<form action="" className="search-form" onSubmit={handleSearch}>
-					<div className="input-control">
-						<input
-							type="text"
-							value={search}
-							onChange={handleChange}
-							placeholder="Search for a Pokemon..."
-						/>
-						<button className="submit-btn" type="submit">
-							Search
-						</button>
-					</div>
-				</form>
+				<div>
+					<form action="" className="search-form" onSubmit={handleSearch}>
+						<div className="input-control">
+							<input
+								type="text"
+								value={search}
+								onChange={handleChange}
+								placeholder="Search for a Pokemon..."
+							/>
+							<button className="submit-btn" type="submit">
+								Search
+							</button>
+							{search && searchResults.length > 0 && (
+								<div className="search-results">{displaySearchResults()}</div>
+							)}
+						</div>
+					</form>
+				</div>
 			</div>
-
-			{search && searchResults.length > 0 && (
-				<div className="search-results">{displaySearchResults()}</div>
-			)}
 
 			<div className="all-pokemon">
 				{allPokemonData ? (
