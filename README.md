@@ -1,5 +1,5 @@
 <div align="center">
-<h1><a href="https://pokemon-app-olive-kappa.vercel.app/" target="_blank">NextJS Pokemon App</a></h1>
+<h1><a href="https://pokemons-apps.vercel.app/" target="_blank">NextJS Pokemon App</a></h1>
 </div>
 
 <div align="center">
@@ -48,7 +48,7 @@ Overall, this app provides a seamless and intuitive experience for users to brow
 
 ![Vercel](https://vercelbadge.vercel.app/api/StarSheriff2/nextjs-pokemon-search-app)
 
-- Deployed to Vercel: [Live Demo](https://pokemon-app-olive-kappa.vercel.app/)
+- Deployed to Vercel: [Live Demo](https://pokemons-apps.vercel.app/)
 
 ### About the API
 
