@@ -31,7 +31,7 @@ Overall, this app provides a seamless and intuitive experience for users to brow
 
 ### UI/UX
 
-[Figma](https://www.figma.com/file/cXZpz8Jbl7mvdapbdEoP95/Untitled?type=design&node-id=0%3A1&mode=design&t=Hdsm9tgSlklvAZtD-1)
+View Design UI/UX with[Figma].(https://www.figma.com/file/cXZpz8Jbl7mvdapbdEoP95/Untitled?type=design&node-id=0%3A1&mode=design&t=Hdsm9tgSlklvAZtD-1)
 
 ### Highlights
 
