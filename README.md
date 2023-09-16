@@ -29,6 +29,10 @@ This **_Next.js_** frontend web app is a user-friendly interface that allows use
 
 Overall, this app provides a seamless and intuitive experience for users to browse and search for Pokemon data. Its fast performance, responsive design, reusable components, and efficient search and browsing features make it a showcase of the power and flexibility of the Next.js framework.
 
+### UI/UX
+
+[Figma](https://www.figma.com/file/cXZpz8Jbl7mvdapbdEoP95/Untitled?type=design&node-id=0%3A1&mode=design&t=Hdsm9tgSlklvAZtD-1)
+
 ### Highlights
 
 - Debounce for search feature to improve usability
